@@ -25,6 +25,8 @@ def loop(nume,deno):
 
 
 def rosa_polar(n,d,r):
+  #  loops = d/n if loop(n,d) else d
+    
     if (loop(n,d)==True):
         loops = d/n
     else:
@@ -51,10 +53,12 @@ def oscar_borboleta(n,d,r):
     return list
 
 def limason(a,b,r):
-    if (loop(a,b) == True):
-        loops = b/a
-    else:
-        loops = b
+
+    loops = b/a if loop(a,b) else b
+ #   if (loop(a,b) == True):
+  #      loops = b/a
+ #   else:
+ #       loops = b
     list = []
     j = 0.0
     for i in range(0,int(200*math.pi*loops),1):
@@ -63,16 +67,21 @@ def limason(a,b,r):
     return list 
 
 def switch_color(case):
-    if (case == "red" or case == "Red" or case =="RED"):
+    if (case == "red"):
         return (255,0,0)
-    elif (case == "blue" or case == "Blue" or case =="BLUE"):
+    elif (case == "blue"):
         return (0,0,255)
-    elif (case == "green" or case == "Green" or case =="GREEN"):
+    elif (case == "green"):
         return (0,255,0)
-    elif (case == "gold" or case == "Gold" or case =="GOLD"):
+    elif (case == "gold"):
         return (255,215,0)
-    elif (case == "black" or case == "Black" or case =="BLACK"):
+    elif (case == "black"):
         return (0,0,0)
+    elif (case == "pink"):
+        return (255,77,255)
+    elif (case == "purple"):
+        return (160,32,240)
+    
 
 def coloracao(n,d,cores,str):
     if(str=="borbo"):
@@ -82,10 +91,13 @@ def coloracao(n,d,cores,str):
             loops = n
         else:
             loops = d
-    elif (loop(n,d) == True):
-        loops = d/n
     else:
-        loops = d
+        # loops = d/n if loop(n,d) else d
+        if (loop(n,d)==True):
+            loops = d/n
+        else:
+            loops = d
+
     list =[]
     for i in range(0,int(200*math.pi*loops),1):
         list.append(switch_color (cores))
@@ -103,6 +115,7 @@ def svgAll(str,n,d,r,str_cor):
         fig = limason(n,d,r)
     else:
         print("entrada incorreta!")
+        return
     palette = coloracao (n, d, str_cor, str)
     return svgElements(svgCircle,fig,map(svgStyle,palette))
 
@@ -113,6 +126,9 @@ def main():
     d = float (sys.argv[3]) 
     r = float (sys.argv[4]) 
     cor = sys.argv[5]
+
+    cor = cor.lower()
+    str = str.lower()
     print ( (svgBegin (1500, 700)) + (svgAll (str,n,d,r,cor)) + svgEnd())
 
 # improvisa uma main() em python

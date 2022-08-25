@@ -24,18 +24,25 @@ def loop(nume,deno):
         return False
 
 
-def rosa_polar(n,d,r):
-  #  loops = d/n if loop(n,d) else d
-    
-    if (loop(n,d)==True):
-        loops = d/n
-    else:
-        loops = d
+def rosa_polar(n,d,radius):
+    tam_loop = d/n if (d%n == 0) else d
     list =  []
-    j =0.0
-    for i in range(0,int(200*math.pi*loops),1):
-        j+=0.01
-        list.append((750+200*(math.cos(n/d*j))*(math.cos(j)), 350+200*(math.cos(n/d*j))*(math.sin(j)), r))
+    theta = 0.0
+    # for better visualization
+    Height = 750
+    Widht = 350
+    Tam = 200
+
+    for i in range(0,int(100*2*math.pi*tam_loop),1):
+        theta +=0.01
+        
+        # converting polar coordnates to cartesian coordinates
+        r = math.cos(n/d*theta)
+        x = Height + Tam *(r)*(math.cos(theta))
+        y = Widht + Tam *(r)*(math.sin(theta))
+
+        # this is a list of points in cartesian coordinates (x, y) + radius
+        list.append((x , y, radius))
     return list
 
 def oscar_borboleta(n,d,r):
@@ -52,18 +59,21 @@ def oscar_borboleta(n,d,r):
         list.append((750-200*(math.cos(n*j)*math.cos(n*j) + math.sin(d*j) +0.3)*(math.cos(j)), 350-200*(math.cos(n*j)*math.cos(n*j) + math.sin(d*j) +0.3)*(math.sin(j)), r))
     return list
 
-def limason(a,b,r):
+def limason(a,b,radius):
+    tam_loop = b/a if (b%a == 0) else b
 
-    loops = b/a if loop(a,b) else b
- #   if (loop(a,b) == True):
-  #      loops = b/a
- #   else:
- #       loops = b
     list = []
-    j = 0.0
-    for i in range(0,int(200*math.pi*loops),1):
-        j+=0.01
-        list.append(( 750 -(a+ b*(math.cos(j))*math.cos(j)), 350 -(a+ b*(math.sin(j)))*math.cos(j), r))
+    theta = 0.0
+    Height = 750
+    Widht = 350
+    for i in range(0,int(100* 2*math.pi*tam_loop),1):
+        theta+=0.01
+
+        r = math.cos(theta)
+        x = Height -(a+ b*(math.cos(theta))) * r
+        y = Widht -(a+ b*(math.sin(theta))) * r
+
+        list.append((x, y, radius))
     return list 
 
 def switch_color(case):

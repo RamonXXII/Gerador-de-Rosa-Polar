@@ -17,23 +17,19 @@ def svgEnd():
 def svgStyle(x):
     return "fill:rgb({R},{G},{B}); mix-blend-mode: screen;".format(R=x[0], G=x[1], B=x[2])
 
-def loop(nume,deno):
-    if(deno % nume == 0):
-        return True
-    else:
-        return False
-
-
-def rosa_polar(n,d,radius):
+def rosa_polar(n,d,quality):
+    
     tam_loop = d/n if (d%n == 0) else d
+    # quality = 100 * max(n,d) +30
+
     list =  []
     theta = 0.0
-    # for better visualization
+    # for better visualization:
     Height = 750
     Widht = 350
     Tam = 200
 
-    for i in range(0,int(100*2*math.pi*tam_loop),1):
+    for i in range(0,int(quality*2*math.pi*tam_loop),1):
         theta +=0.01
         
         # converting polar coordnates to cartesian coordinates
@@ -42,41 +38,58 @@ def rosa_polar(n,d,radius):
         y = Widht + Tam *(r)*(math.sin(theta))
 
         # this is a list of points in cartesian coordinates (x, y) + radius
-        list.append((x , y, radius))
+        list.append((x , y, 2))
     return list
 
-def oscar_borboleta(n,d,r):
-    if(loop(n,d)== True):
-        loops = n/d
-    elif(n>d):
-        loops = n
-    else:
-        loops = d
+def oscar_butterfly(n,d,quality):
+    tam_loop = d/n if (d%n==0) else (n/d if (n%d==0) else max(n,d))
+
     list =[]
-    j =0.0
-    for i in range(0,int(200*math.pi*n),1):
-        j+=0.01
-        list.append((750-200*(math.cos(n*j)*math.cos(n*j) + math.sin(d*j) +0.3)*(math.cos(j)), 350-200*(math.cos(n*j)*math.cos(n*j) + math.sin(d*j) +0.3)*(math.sin(j)), r))
+    theta =0.0
+    # for better visualization:
+    Height = 750
+    Widht = 350
+    Tam = 200
+
+    for i in range(0,int(quality*2*math.pi*tam_loop),1):
+        theta+=0.01
+
+        r = pow(math.cos(n*theta), 2) + math.sin(d*theta) +0.3
+        x = Height - Tam * math.cos(theta) * r
+        y = Widht  - Tam * math.sin(theta) * r
+
+        list.append((x, y, 2))
     return list
 
-def limason(a,b,radius):
+def limason(a,b,quality):
     tam_loop = b/a if (b%a == 0) else b
 
     list = []
     theta = 0.0
+    # for centralization: 
     Height = 750
     Widht = 350
-    for i in range(0,int(100* 2*math.pi*tam_loop),1):
+
+    for i in range(0,int(quality* 2*math.pi*tam_loop),1):
         theta+=0.01
 
         r = math.cos(theta)
-        x = Height -(a+ b*(math.cos(theta))) * r
-        y = Widht -(a+ b*(math.sin(theta))) * r
+        x = Height -(a+ b*(math.cos(theta))* r)
+        y = Widht  -(a+ b*(math.sin(theta))) * r
 
-        list.append((x, y, radius))
+        list.append((x, y, 2))
     return list 
 
+def quality(case):
+    case = case.lower()
+    if(case == "high"):
+        return 1000
+    # recommended == 100
+    else:
+        return 100
+
 def switch_color(case):
+    case = case.lower()
     if (case == "red"):
         return (255,0,0)
     elif (case == "blue"):
@@ -92,41 +105,34 @@ def switch_color(case):
     elif (case == "purple"):
         return (160,32,240)
     
-
-def coloracao(n,d,cores,str):
+def coloracao(n, d, quality, cores,str):
     if(str=="borbo"):
-        if(loop(n,d)== True):
-            loops = n/d
-        elif(n>d):
-            loops = n
-        else:
-            loops = d
+        tam_loop = d/n if (d%n==0) else (n/d if (n%d==0) else max(n,d))
     else:
-        # loops = d/n if loop(n,d) else d
-        if (loop(n,d)==True):
-            loops = d/n
-        else:
-            loops = d
-
+         tam_loop = d/n if ( d%n==0 ) else d
+         #quality = 100* max(n,d) +30
+    
     list =[]
-    for i in range(0,int(200*math.pi*loops),1):
-        list.append(switch_color (cores))
+    cor = switch_color (cores)
+    for i in range(0,int(quality*2*math.pi*tam_loop),1):
+        list.append(cor)
     return list
 
 def svgElements(func, elements, style):
     return ' '.join(map(func,elements,style))
 
-def svgAll(str,n,d,r,str_cor):
-    if(str == "rosa"):
-        fig = rosa_polar(n,d,r)
-    elif(str == "borbo"):
-        fig = oscar_borboleta(n,d,r)
+def svgAll(str,n,d,quality,str_cor):
+    str = str.lower()
+    if(str == "rose"):
+        fig = rosa_polar(n,d,quality)
+    elif(str == "butterfly"):
+        fig = oscar_butterfly(n,d,quality)
     elif(str == "limason"):
-        fig = limason(n,d,r)
+        fig = limason(n,d,quality)
     else:
         print("entrada incorreta!")
         return
-    palette = coloracao (n, d, str_cor, str)
+    palette = coloracao (n, d, quality,str_cor, str)
     return svgElements(svgCircle,fig,map(svgStyle,palette))
 
 # main 
@@ -134,12 +140,12 @@ def main():
     str = (sys.argv[1])
     n = float (sys.argv[2]) 
     d = float (sys.argv[3]) 
-    r = float (sys.argv[4]) 
+    quality = float (sys.argv[4]) 
     cor = sys.argv[5]
 
-    cor = cor.lower()
-    str = str.lower()
-    print ( (svgBegin (1500, 700)) + (svgAll (str,n,d,r,cor)) + svgEnd())
+    quality = 100
+
+    print ( (svgBegin (1500, 700)) + (svgAll (str,n,d,quality,cor)) + svgEnd())
 
 # improvisa uma main() em python
 if __name__ == "__main__":

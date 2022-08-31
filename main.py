@@ -2,7 +2,7 @@ import math
 from ntpath import join
 import sys
 
-
+# inicio do svg
 def svgBegin(l, a):
     return "<svg width='{w}' height='{h}' xmlns='http://www.w3.org/2000/svg'>\n".format(w = l, h = a)
 
@@ -80,6 +80,29 @@ def limason(a,b,quality):
         list.append((x, y, 2))
     return list 
 
+def ramons(n,d,quality):
+    
+    tam_loop = d/n if (d%n == 0) else max(n,d)
+    # quality = 100 * max(n,d) +30
+
+    list =  []
+    theta = 0.0
+    # for better visualization:
+    Height = 750
+    Widht = 350
+    Tam = 200
+
+    for i in range(0,int(quality*2*math.pi*tam_loop),1):
+        theta +=0.01
+        
+        # random r
+        r = math.cos(n*theta) + math.sin(d*theta)
+        x = Height + Tam *(r)*(math.cos(theta))
+        y = Widht + Tam *(r)*(math.sin(theta))
+
+        list.append((x , y, 2))
+    return list
+
 def quality(case):
     case = case.lower()
     if(case == "high"):
@@ -106,8 +129,10 @@ def switch_color(case):
         return (160,32,240)
     
 def coloracao(n, d, quality, cores,str):
-    if(str=="borbo"):
+    if(str=="butterfly"):
         tam_loop = d/n if (d%n==0) else (n/d if (n%d==0) else max(n,d))
+    elif(str=="ramons"):
+        tam_loop = d/n if (d%n == 0) else max(n,d)
     else:
          tam_loop = d/n if ( d%n==0 ) else d
          #quality = 100* max(n,d) +30
@@ -129,6 +154,8 @@ def svgAll(str,n,d,quality,str_cor):
         fig = oscar_butterfly(n,d,quality)
     elif(str == "limason"):
         fig = limason(n,d,quality)
+    elif(str == "ramons"):
+        fig = ramons(n,d,quality)
     else:
         print("entrada incorreta!")
         return
